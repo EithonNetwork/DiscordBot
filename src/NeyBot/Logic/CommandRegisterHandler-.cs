@@ -95,19 +95,19 @@ namespace NeyBot.Logic
             commands.CreateGroup("birthday", cgb =>
             {
 
-                cgb.CreateCommand("set")
+                cgb.CreateCommand("setbirthdate")
                     .Description("Set your own birthday")
                     .Parameter("date", ParameterType.Required)
-                    .Do(e => BirthdayCommandHandler.Set(e));
+                    .Do(e => BirthdayHandler.Set(e));
 
                 cgb.CreateCommand("show")
                     .Description("Display a user's birthday")
                     .Parameter("user", ParameterType.Required)
-                    .Do(e => BirthdayCommandHandler.Get(e));
+                    .Do(e => BirthdayHandler.Get(e));
 
                 cgb.CreateCommand("upcoming")
                     .Description("Display upcoming birthdays")
-                    .Do(e => BirthdayCommandHandler.GetUpcoming(e));
+                    .Do(e => BirthdayHandler.GetUpcoming(e));
             });
         }
     }

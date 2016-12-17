@@ -88,5 +88,22 @@ namespace NeyBot.Database
                 return birthdays;
             }
         }
+        public static IEnumerable<Birthday> GetTodays(int limit)
+        {
+            using (var conn = new MySql.Data.MySqlClient.MySqlConnection(connectionString))
+            {
+                conn.Open();
+                var birthdays = conn.Query<Birthday>(@"
+                    SELECT
+                        id Id, 
+                        user_id UserId, 
+                        username Username, 
+                        birthday BirthdayDate
+                    FROM birthdays
+                    WHERE
+                    	SUBSTRING(birthday, 6, 5) = SUBSTRING(CURRENT_DATE, 6, 5)");
+                return birthdays;
+            }
+        }
     }
 }

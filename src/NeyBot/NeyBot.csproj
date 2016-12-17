@@ -90,9 +90,11 @@
     <Compile Include="Database\ReputationDatabaseHandler.cs" />
     <Compile Include="Logic\CommandRegisterHandler-.cs" />
     <Compile Include="Logic\CommandResourcesHandler.cs" />
-    <Compile Include="Logic\BirthdayCommandHandler.cs" />
+    <Compile Include="Logic\BirthdayHandler.cs" />
     <Compile Include="Logic\ConfigurationHandler.cs" />
+    <Compile Include="Logic\InitiationsAfterConnection.cs" />
     <Compile Include="Logic\ReputationCommandHandler.cs" />
+    <Compile Include="Logic\TimerHandler.cs" />
     <Compile Include="MyBot.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

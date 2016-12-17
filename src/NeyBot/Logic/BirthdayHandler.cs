@@ -1,4 +1,5 @@
-﻿using Discord.Commands;
+﻿using Discord;
+using Discord.Commands;
 using NeyBot.Database;
 using NeyBot.Logic;
 using System;
@@ -6,12 +7,44 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace NeyBot.Logic
 {
-    public class BirthdayCommandHandler
+    public class BirthdayHandler
     {
+
+        public BirthdayHandler()
+        {
+
+        }
+
+        public void CongratulateBirthdays(Server server, object state)
+        {
+            var alertTime = (TimeSpan) state;
+
+            CongratulateTodays(server);
+
+            var th = new TimerHandler();
+
+            var timeToGo = th.CongratulateBirthdaysTimer(server, alertTime);
+        }
+
+        private void CongratulateTodays(Server server)
+        {
+            var todaysBirthdays = BirthdayDatabaseHandler.GetTodays(10);
+            StringBuilder congratulationMessage = new StringBuilder($"Happy birthday ");
+            var i = 1;
+            foreach (var birthday in todaysBirthdays)
+            {
+                congratulationMessage.Append($"**{birthday.Username}**, ");
+            }
+            congratulationMessage.Length = congratulationMessage.Length - 2;
+            congratulationMessage.Append("!");
+            var channelName = CommandResourcesHandler.GetChannel(server, "GeneralTextChannel");
+            channelName.SendMessage(congratulationMessage.ToString());
+        }
 
         public static async Task Get(CommandEventArgs e)
         {
@@ -37,6 +70,10 @@ namespace NeyBot.Logic
                 }
             }
         }
+
+
+
+
         public static async Task Set(CommandEventArgs e)
         {
             var userObject = e.User;

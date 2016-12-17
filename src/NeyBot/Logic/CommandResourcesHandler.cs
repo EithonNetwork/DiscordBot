@@ -11,11 +11,16 @@ namespace NeyBot.Logic
 {
     class CommandResourcesHandler
     {
-        //Neylion's Id, currently not used anywhere for testing purposes
+        //Owner ID, requirement for "dangerous" tasks.
         private static ulong ownerId = ConfigurationHandler.GetUlongOption("NeylionID");
+        //Text channel Ids (Included "TextChannel" and "text" to avoid possible conflicts with voice channels.
+        private static ulong serverId = ConfigurationHandler.GetUlongOption("EithonServer");
         //Add the role IDs that you have commands for here and add the variable to the "GetRoleBasedOnName" method as well.
         private static ulong administratorRoleId = ConfigurationHandler.GetUlongOption("Admin");
         private static ulong moderatorRoleId = ConfigurationHandler.GetUlongOption("Moderator");
+        //Text channel Ids (Included "TextChannel" and "text" to avoid possible conflicts with voice channels.
+        private static ulong generalTextChannelId = ConfigurationHandler.GetUlongOption("GeneralTextChannel");
+
 
         public static string GetUserId(string userParam)
         {
@@ -23,7 +28,12 @@ namespace NeyBot.Logic
             return r.Groups[0].Value;
         }
 
-        //This method gets a user based on it's ID string 
+        internal static Server GetServer(DiscordClient discord)
+        {
+            return discord.GetServer(serverId); 
+        }
+
+        //This method gets a user based on their ID string 
         public static User GetUser(CommandEventArgs e, string userIdString)
         {
             try
@@ -36,6 +46,15 @@ namespace NeyBot.Logic
             {
                 return null;
             }
+        }
+
+        public static Channel GetChannel(Server server, string channelName)
+        {
+            if (channelName == "GeneralTextChannel") return server.GetChannel(generalTextChannelId);
+            //if (channelName == "OtherTextChannel") return discord.GetChannel(OtherTextChannel);
+            //if (channelName == "OtherTextChannel2") return discord.GetChannel(OtherTextChannel2);
+            //if (channelName == "OtherTextChannel3") return discord.GetChannel(OtherTextChannel3);
+            return null;
         }
 
         //Gets the specific argument for the parameter requested (based on the parameter string). String must be equal to the one of the parameters in the command.

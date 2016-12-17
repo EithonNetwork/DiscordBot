@@ -33,12 +33,17 @@ namespace NeyBot
             //Registers the commmands
             var commandHandler = new CommandRegisterHandler(discord);
             commandHandler.RegisterCommands();
-      
+
+            var initiationAfterConnection = new InitiationsAfterConnection();
+            initiationAfterConnection.AwaitConnectionThenDo(discord);
+
             //Connects to the Discord servers it is added to
             discord.ExecuteAndWait(async () =>
             {
                 await discord.Connect(ConfigurationHandler.GetStringOption("BotToken"), TokenType.Bot);
             });
+
+            
         }
 
         private void Log(object sender, LogMessageEventArgs e)
