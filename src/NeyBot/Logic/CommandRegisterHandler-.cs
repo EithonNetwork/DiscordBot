@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using NeyBot.Logic.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,65 +51,114 @@ namespace NeyBot.Logic
 
         //Registers the Reputation command (!rep) which handles reputation on Eithon. Since it's a bigger command it has it's own handler.
         public void RegisterRepCommand()
+
         {
-            commands.CreateGroup("rep", cgb =>
+            var baseCommand = "rep";
+            List<CommandInfo> commandInfo = new List<CommandInfo>();
+
+            var pointsCommand = new CommandInfo(baseCommand, "points")
+                .SetParams("@<user>")
+                .SetDescription("Show a user's reputation points")
+                .SetAction(e => ReputationCommandHandler.GetReputation(e));
+            commandInfo.Add(pointsCommand);
+
+            var addCommand = new CommandInfo(baseCommand, "add")
+                .SetParams("@<user>")
+                .SetDescription("Add reputation to a user")
+                .SetAction(e => ReputationCommandHandler.Add(e));
+            commandInfo.Add(addCommand);
+
+            var removeCommand = new CommandInfo(baseCommand, "remove")
+                .SetParams("@<user>")
+                .SetDescription("remove reputation to a user")
+                .SetAction(e => ReputationCommandHandler.Remove(e));
+            commandInfo.Add(removeCommand);
+
+            var resetCommand = new CommandInfo(baseCommand, "reset")
+                .SetParams("@<user>")
+                .SetDescription("Reset a user (remove from database)")
+                .SetAction(e => ReputationCommandHandler.ResetUser(e));
+            commandInfo.Add(resetCommand);
+
+            var resetallCommand = new CommandInfo(baseCommand, "resetall")
+                .SetDescription("Reset all reputations. Clear database")
+                .SetAction(e => ReputationCommandHandler.ResetAll(e));
+            commandInfo.Add(resetallCommand);
+
+            var toplistCommand = new CommandInfo(baseCommand, "toplist")
+                .SetDescription("List users with the most reputation")
+                .SetAction(e => ReputationCommandHandler.GetTopList(e));
+            commandInfo.Add(toplistCommand);
+
+            var helpMessage = HelpMessageHandler.HelpMessageBuilder(commandInfo);
+            var helpCommand = new CommandInfo(baseCommand, "help")
+                .SetDescription($"Displays all the commands related to !{baseCommand}")
+                .SetAction(async e => await e.Channel.SendMessage(helpMessage));
+            commandInfo.Add(helpCommand);
+
+            commands.CreateGroup(baseCommand, cgb =>
             {
-
-                cgb.CreateCommand("points")
-                    .Description("Show a user's reputation points")
-                    .Parameter("user", ParameterType.Required)
-                    .Do(e => ReputationCommandHandler.GetReputation(e));
-
-                cgb.CreateCommand("add")
-                    .Description("Add reputation to a user")
-                    .Parameter("user", ParameterType.Required)
-                    //currently not used
-                    .Parameter("amount", ParameterType.Optional)
-                    .Do(e=> ReputationCommandHandler.Add(e));
-
-                cgb.CreateCommand("remove")
-                    .Description("Remove reputation to a user")
-                    .Parameter("user", ParameterType.Required)
-                    //currently not used
-                    .Parameter("amount", ParameterType.Optional)
-                    .Do(e => ReputationCommandHandler.Remove(e));
-
-                cgb.CreateCommand("reset")
-                    .Description("Reset a user (remove from database)")
-                    .Parameter("user", ParameterType.Required)
-                    .Do(e => ReputationCommandHandler.ResetUser(e));
-
-                cgb.CreateCommand("resetall")
-                    .Description("Reset all reputations. Clear database")
-                    .Do(e => ReputationCommandHandler.ResetAll(e));
-
-                cgb.CreateCommand("toplist")
-                    .Description("List users with the most reputation")
-                    //currently not used
-                    .Parameter("amount", ParameterType.Optional)
-                    .Do(e => ReputationCommandHandler.GetTopList(e));
+                foreach (var command in commandInfo)
+                {
+                    CreateCommandBasedOnCommandInfo(cgb, command);
+                }
             });
         }
         //Registers the !Birthday command. Since it's a bigger command it has it's own handler.
         public void RegisterBirthdayCommand()
         {
-            commands.CreateGroup("birthday", cgb =>
+            var baseCommand = "birthday";
+            List<CommandInfo> commandInfo = new List<CommandInfo>();
+
+            //setbirthdate command
+            var setbirthdateCommand = new CommandInfo(baseCommand, "setbirthdate")
+                .SetParams("<date>")
+                .SetDescription("Sets your birthdate (Date format: 2003-09-17)")
+                .SetAction(e => BirthdayHandler.Set(e));
+            commandInfo.Add(setbirthdateCommand);
+
+            //show command
+            var showCommand = new CommandInfo(baseCommand, "show")
+                .SetParams("@<user>")
+                .SetDescription("Display a user's birthday")
+                .SetAction(e => BirthdayHandler.Get(e));
+            commandInfo.Add(showCommand);
+
+            //upcoming command
+            var upcomingCommand = new CommandInfo(baseCommand, "upcoming")
+                .SetDescription("Show the closest upcoming birthdays")
+                .SetAction(BirthdayHandler.GetUpcoming);
+            commandInfo.Add(upcomingCommand);
+
+            //help command
+            var helpMessage = HelpMessageHandler.HelpMessageBuilder(commandInfo);
+            var helpCommand = new CommandInfo(baseCommand, "help")
+                .SetDescription($"Displays all the commands related to !{baseCommand}")
+                .SetAction(async e => await e.Channel.SendMessage(helpMessage));
+            commandInfo.Add(helpCommand);
+
+            commands.CreateGroup(baseCommand, cgb =>
             {
-
-                cgb.CreateCommand("setbirthdate")
-                    .Description("Set your own birthday")
-                    .Parameter("date", ParameterType.Required)
-                    .Do(e => BirthdayHandler.Set(e));
-
-                cgb.CreateCommand("show")
-                    .Description("Display a user's birthday")
-                    .Parameter("user", ParameterType.Required)
-                    .Do(e => BirthdayHandler.Get(e));
-
-                cgb.CreateCommand("upcoming")
-                    .Description("Display upcoming birthdays")
-                    .Do(e => BirthdayHandler.GetUpcoming(e));
+                foreach (var command in commandInfo)
+                {
+                    CreateCommandBasedOnCommandInfo(cgb, command);
+                }
             });
         }
+
+        public void CreateCommandBasedOnCommandInfo(CommandGroupBuilder cgb, CommandInfo commandInfo)
+        {
+            CommandBuilder command = cgb.CreateCommand(commandInfo.GetSubCommand())
+                .Description(commandInfo.GetDescription());
+            string[] paramStrings = commandInfo.GetParams();
+            if (paramStrings == null) { command.Do(commandInfo.GetAction()); return; }
+
+            foreach (var param in commandInfo.GetParams())
+            {
+                command.Parameter(param, ParameterType.Required);
+            }
+            command.Do(commandInfo.GetAction());
+        }
+
     }
 }

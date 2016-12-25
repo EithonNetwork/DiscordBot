@@ -48,7 +48,7 @@ namespace NeyBot.Logic
 
         public static async Task Get(CommandEventArgs e)
         {
-            var userParam = CommandResourcesHandler.GetArgument(e, "user");
+            var userParam = CommandResourcesHandler.GetArgument(e, "@<user>");
             string userIdString = CommandResourcesHandler.GetUserId(userParam);
             var userObject = CommandResourcesHandler.GetUser(e, userIdString);
             if (userObject == null)
@@ -58,14 +58,14 @@ namespace NeyBot.Logic
             else
             {
                 var birthday = BirthdayDatabaseHandler.Get(userIdString);
-                DateTimeOffset birthdayDate = DateTimeOffset.Parse(birthday.BirthdayDate);
-                var birthdayMonthDay = birthdayDate.ToString("MMMM dd");
                 if (birthday == null)
                 {
                     await e.Channel.SendMessage($"**{userObject.Nickname ?? userObject.Name}** does not appear to have added their birthday.");
                 }
                 else
                 {
+                    DateTimeOffset birthdayDate = DateTimeOffset.Parse(birthday.BirthdayDate);
+                    var birthdayMonthDay = birthdayDate.ToString("MMMM dd");
                     await e.Channel.SendMessage($"**{userObject.Nickname ?? userObject.Name}**'s birthday is {birthdayMonthDay}.");
                 }
             }
@@ -77,7 +77,7 @@ namespace NeyBot.Logic
         public static async Task Set(CommandEventArgs e)
         {
             var userObject = e.User;
-            var birthdayParam = CommandResourcesHandler.GetArgument(e, "date");
+            var birthdayParam = CommandResourcesHandler.GetArgument(e, "<date>");
             DateTimeOffset birthdayDate;
             var success = CommandResourcesHandler.TryParseDate(birthdayParam, out birthdayDate);
             if (!success)

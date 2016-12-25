@@ -28,7 +28,7 @@ namespace NeyBot.Logic
 
         public static async Task GetReputation(CommandEventArgs e)
         {
-            var userParam = CommandResourcesHandler.GetArgument(e, "user");
+            var userParam = CommandResourcesHandler.GetArgument(e, "@<user>");
             string userIdString = CommandResourcesHandler.GetUserId(userParam);
             var userObject = CommandResourcesHandler.GetUser(e, userIdString);
             if (userObject == null)
@@ -51,7 +51,7 @@ namespace NeyBot.Logic
         {
             if (IsAllowedToChangeReputation(e))
             {
-                var userParam = CommandResourcesHandler.GetArgument(e, "user");
+                var userParam = CommandResourcesHandler.GetArgument(e, "@<user>");
                 string userIdString = CommandResourcesHandler.GetUserId(userParam);
                 var userObject = CommandResourcesHandler.GetUser(e, userIdString);
                 if (userObject == null)
@@ -88,7 +88,7 @@ namespace NeyBot.Logic
         {
             if (IsAllowedToChangeReputation(e))
             {
-                var userParam = CommandResourcesHandler.GetArgument(e, "user");
+                var userParam = CommandResourcesHandler.GetArgument(e, "@<user>");
                 string userIdString = CommandResourcesHandler.GetUserId(userParam);
                 var userObject = CommandResourcesHandler.GetUser(e, userIdString);
                 if (userObject == null)
@@ -127,7 +127,7 @@ namespace NeyBot.Logic
         {
             if (IsAllowedToResetUserReputation(e))
             {
-                var userParam = CommandResourcesHandler.GetArgument(e, "user");
+                var userParam = CommandResourcesHandler.GetArgument(e, "@<user>");
                 string userIdString = CommandResourcesHandler.GetUserId(userParam);
                 var userObject = CommandResourcesHandler.GetUser(e, userIdString);
                 if (userObject == null)

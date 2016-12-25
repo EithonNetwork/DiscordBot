@@ -27,12 +27,12 @@ namespace NeyBot.Logic
 
             _timer = new System.Threading.Timer(x =>
             {
-                bh.CongratulateBirthdays(server, alertTime);
+                bh.CongratulateBirthdays(server, x);
             },
-                null, timeToGo, Timeout.InfiniteTimeSpan);
+                alertTime, timeToGo, Timeout.InfiniteTimeSpan);
 
-            var channelName = CommandResourcesHandler.GetChannel(server, "GeneralTextChannel");
-            channelName.SendMessage($"Started Timer. Time remaining: {timeToGo.Hours}:{timeToGo.Minutes}:{timeToGo.Seconds}");
+            //var channelName = CommandResourcesHandler.GetChannel(server, "GeneralTextChannel");
+            //channelName.SendMessage($"Started Timer. Time remaining: {timeToGo.Hours}:{timeToGo.Minutes}:{timeToGo.Seconds}");
 
             return timeToGo;
         }

@@ -92,7 +92,9 @@
     <Compile Include="Logic\CommandResourcesHandler.cs" />
     <Compile Include="Logic\BirthdayHandler.cs" />
     <Compile Include="Logic\ConfigurationHandler.cs" />
+    <Compile Include="Logic\HelpMessageHandler.cs" />
     <Compile Include="Logic\InitiationsAfterConnection.cs" />
+    <Compile Include="Logic\Models\CommandInfo.cs" />
     <Compile Include="Logic\ReputationCommandHandler.cs" />
     <Compile Include="Logic\TimerHandler.cs" />
     <Compile Include="MyBot.cs" />
