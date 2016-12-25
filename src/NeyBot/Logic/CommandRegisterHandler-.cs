@@ -11,38 +11,37 @@ namespace NeyBot.Logic
 {
     class CommandRegisterHandler
     {
-        CommandService commands;
+        CommandService _commandService;
 
         public CommandRegisterHandler(DiscordClient discord)
         {
-            commands = discord.GetService<CommandService>();
+            _commandService = discord.GetService<CommandService>();
         }
 
         public void RegisterCommands()
         {
             //Register the commands here
-            RegisterPicTutCommand();
-            RegisterInvitationlinkCommand();
-            RegisterRepCommand();
-            RegisterBirthdayCommand();
-
+            RegisterPicTutCommand("pictut");
+            RegisterInvitationlinkCommand("neybotinvite");
+            RegisterRepCommand("rep");
+            RegisterBirthdayCommand("birthday");
         }
 
         //Make the methods for the commands registered here
 
         //Registers the command !pictut which links the tutorial Zalodu made for private voice channel management (Mainly a test command)
-        public void RegisterPicTutCommand()
+        public void RegisterPicTutCommand(string baseCommand)
         {
-            commands.CreateCommand("pictut")
+            _commandService.CreateCommand(baseCommand)
                 .Do(async (e) =>
                 {
                     await e.Channel.SendFile("PicTuts/discord.tutorial.png");
                 });
         }
         //Registers the !neybotinvite command that links the invite link to neybot
-        public void RegisterInvitationlinkCommand()
+        public void RegisterInvitationlinkCommand(string baseCommand)
         {
-            commands.CreateCommand("neybotinvite")
+            _commandService.CreateCommand(baseCommand)
             .Do(async (e) =>
             {
                 await e.Channel.SendMessage("https://discordapp.com/api/oauth2/authorize?client_id=239322529385152512&scope=bot&permissions=0");
@@ -50,114 +49,74 @@ namespace NeyBot.Logic
         }
 
         //Registers the Reputation command (!rep) which handles reputation on Eithon. Since it's a bigger command it has it's own handler.
-        public void RegisterRepCommand()
+        public void RegisterRepCommand(string baseCommand)
 
         {
-            var baseCommand = "rep";
-            List<CommandInfo> commandInfo = new List<CommandInfo>();
+            CommandInfo command;
+            CommandGroup commandGroup = new CommandGroup(baseCommand, _commandService);
 
-            var pointsCommand = new CommandInfo(baseCommand, "points")
+            command = new CommandInfo(baseCommand, "points")
                 .SetParams("@<user>")
                 .SetDescription("Show a user's reputation points")
-                .SetAction(e => ReputationCommandHandler.GetReputation(e));
-            commandInfo.Add(pointsCommand);
+                .SetAction(ReputationCommandHandler.GetReputation);
+            commandGroup.Add(command);
 
-            var addCommand = new CommandInfo(baseCommand, "add")
+            command = new CommandInfo(baseCommand, "add")
                 .SetParams("@<user>")
                 .SetDescription("Add reputation to a user")
-                .SetAction(e => ReputationCommandHandler.Add(e));
-            commandInfo.Add(addCommand);
+                .SetAction(ReputationCommandHandler.Add);
+            commandGroup.Add(command);
 
-            var removeCommand = new CommandInfo(baseCommand, "remove")
+            command = new CommandInfo(baseCommand, "remove")
                 .SetParams("@<user>")
                 .SetDescription("remove reputation to a user")
-                .SetAction(e => ReputationCommandHandler.Remove(e));
-            commandInfo.Add(removeCommand);
+                .SetAction(ReputationCommandHandler.Remove);
+            commandGroup.Add(command);
 
-            var resetCommand = new CommandInfo(baseCommand, "reset")
+            command = new CommandInfo(baseCommand, "reset")
                 .SetParams("@<user>")
                 .SetDescription("Reset a user (remove from database)")
-                .SetAction(e => ReputationCommandHandler.ResetUser(e));
-            commandInfo.Add(resetCommand);
+                .SetAction(ReputationCommandHandler.ResetUser);
+            commandGroup.Add(command);
 
-            var resetallCommand = new CommandInfo(baseCommand, "resetall")
+            command = new CommandInfo(baseCommand, "resetall")
                 .SetDescription("Reset all reputations. Clear database")
-                .SetAction(e => ReputationCommandHandler.ResetAll(e));
-            commandInfo.Add(resetallCommand);
+                .SetAction(ReputationCommandHandler.ResetAll);
+            commandGroup.Add(command);
 
-            var toplistCommand = new CommandInfo(baseCommand, "toplist")
+            command = new CommandInfo(baseCommand, "toplist")
                 .SetDescription("List users with the most reputation")
-                .SetAction(e => ReputationCommandHandler.GetTopList(e));
-            commandInfo.Add(toplistCommand);
+                .SetAction(ReputationCommandHandler.GetTopList);
+            commandGroup.Add(command);
 
-            var helpMessage = HelpMessageHandler.HelpMessageBuilder(commandInfo);
-            var helpCommand = new CommandInfo(baseCommand, "help")
-                .SetDescription($"Displays all the commands related to !{baseCommand}")
-                .SetAction(async e => await e.Channel.SendMessage(helpMessage));
-            commandInfo.Add(helpCommand);
-
-            commands.CreateGroup(baseCommand, cgb =>
-            {
-                foreach (var command in commandInfo)
-                {
-                    CreateCommandBasedOnCommandInfo(cgb, command);
-                }
-            });
+            commandGroup.Register();
         }
         //Registers the !Birthday command. Since it's a bigger command it has it's own handler.
-        public void RegisterBirthdayCommand()
+        public void RegisterBirthdayCommand(string baseCommand)
         {
-            var baseCommand = "birthday";
-            List<CommandInfo> commandInfo = new List<CommandInfo>();
+            CommandGroup commandGroup = new CommandGroup(baseCommand, _commandService);
 
             //setbirthdate command
             var setbirthdateCommand = new CommandInfo(baseCommand, "setbirthdate")
                 .SetParams("<date>")
                 .SetDescription("Sets your birthdate (Date format: 2003-09-17)")
-                .SetAction(e => BirthdayHandler.Set(e));
-            commandInfo.Add(setbirthdateCommand);
+                .SetAction(BirthdayHandler.Set);
+            commandGroup.Add(setbirthdateCommand);
 
             //show command
             var showCommand = new CommandInfo(baseCommand, "show")
                 .SetParams("@<user>")
                 .SetDescription("Display a user's birthday")
-                .SetAction(e => BirthdayHandler.Get(e));
-            commandInfo.Add(showCommand);
+                .SetAction(BirthdayHandler.Get);
+            commandGroup.Add(showCommand);
 
             //upcoming command
             var upcomingCommand = new CommandInfo(baseCommand, "upcoming")
                 .SetDescription("Show the closest upcoming birthdays")
                 .SetAction(BirthdayHandler.GetUpcoming);
-            commandInfo.Add(upcomingCommand);
+            commandGroup.Add(upcomingCommand);
 
-            //help command
-            var helpMessage = HelpMessageHandler.HelpMessageBuilder(commandInfo);
-            var helpCommand = new CommandInfo(baseCommand, "help")
-                .SetDescription($"Displays all the commands related to !{baseCommand}")
-                .SetAction(async e => await e.Channel.SendMessage(helpMessage));
-            commandInfo.Add(helpCommand);
-
-            commands.CreateGroup(baseCommand, cgb =>
-            {
-                foreach (var command in commandInfo)
-                {
-                    CreateCommandBasedOnCommandInfo(cgb, command);
-                }
-            });
-        }
-
-        public void CreateCommandBasedOnCommandInfo(CommandGroupBuilder cgb, CommandInfo commandInfo)
-        {
-            CommandBuilder command = cgb.CreateCommand(commandInfo.GetSubCommand())
-                .Description(commandInfo.GetDescription());
-            string[] paramStrings = commandInfo.GetParams();
-            if (paramStrings == null) { command.Do(commandInfo.GetAction()); return; }
-
-            foreach (var param in commandInfo.GetParams())
-            {
-                command.Parameter(param, ParameterType.Required);
-            }
-            command.Do(commandInfo.GetAction());
+            commandGroup.Register();
         }
 
     }

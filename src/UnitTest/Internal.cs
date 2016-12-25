@@ -8,7 +8,7 @@ namespace UnitTest
     [TestClass]
     public class Internal
     {
-        [TestMethod]
+        /*[TestMethod]
         public void UserIdName()
         {
             var id = "234";
@@ -22,6 +22,6 @@ namespace UnitTest
             var id = "234";
             var result = CommandResourcesHandler.GetUserId($"\"<!{id}>\"");
             Assert.AreEqual(id, result);
-        }
+        }*/
     }
 }

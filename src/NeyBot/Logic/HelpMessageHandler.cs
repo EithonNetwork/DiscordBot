@@ -9,10 +9,10 @@ namespace NeyBot.Logic
 {
     class HelpMessageHandler
     {
-        public static string HelpMessageBuilder(List<CommandInfo> commandsInfo)
+        public static string HelpMessageBuilder(CommandGroup commandsInfo)
         {
-            var helpMessage = new StringBuilder($"These are the commands available for ``!{commandsInfo[0].GetMainCommand()}``: \n\n");
-            foreach (var command in commandsInfo)
+            var helpMessage = new StringBuilder($"These are the commands available for ``!{commandsInfo.BaseCommand}``: \n\n");
+            foreach (var command in commandsInfo.Values)
             {
                 var completeCommand = command.GetMainCommand() + " " + command.GetSubCommand();
                 var commandParams = command.GetParams();
@@ -29,25 +29,8 @@ namespace NeyBot.Logic
                     }
                     helpMessage.Append($"**!{completeCommand}** - {command.GetDescription()} \n");
                 }
-
-
             }
             return helpMessage.ToString();
-        }/*
-
-        public static string Birthday()
-        {
-            var mainCommand = "birthday";
-            CommandInfo[] commands =
-            {
-                new CommandInfo(mainCommand, "setbirthdate <year>-<month>-<day>", "Sets your birthdate (Format example: 2003-09-17)"),
-                new CommandInfo(mainCommand, "show @<user>", "Sets your birthdate"),
-                new CommandInfo(mainCommand, "upcoming", "Shows the closest upcoming birthdays"),
-            };
-
-            return HelpMessageBuilder(commands).ToString();
-        }*/
-
-
+        }
     }
 }

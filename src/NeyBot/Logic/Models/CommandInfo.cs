@@ -9,6 +9,7 @@ namespace NeyBot.Logic.Models
 {
     class CommandInfo
     {
+        //TODO: "bool includedInHelp"
         string _commandGroup;
         string _subCommand;
         string[] _paramsString;
