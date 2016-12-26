@@ -12,7 +12,7 @@ namespace NeyBot.Logic.Models
         //TODO: "bool includedInHelp"
         string _commandGroup;
         string _subCommand;
-        string[] _paramsString;
+        private List<CommandParam> _params = new List<CommandParam>();
         string _description;
         Func<CommandEventArgs, Task> _action;
 
@@ -22,9 +22,10 @@ namespace NeyBot.Logic.Models
             _subCommand = subCommand;
         }
 
-        public CommandInfo SetParams(params string[] paramStrings)
+        public CommandInfo AddParams(string paramName, bool isRequired)
         {
-            _paramsString = paramStrings;
+            CommandParam param = new CommandParam(paramName, isRequired);
+            _params.Add(param);
             return this;
         }
 
@@ -52,9 +53,9 @@ namespace NeyBot.Logic.Models
             return _subCommand;
         }
 
-        public string[] GetParams()
+        public List<CommandParam> GetParams()
         {
-            return _paramsString;
+            return _params;
         }
 
         public string GetDescription()

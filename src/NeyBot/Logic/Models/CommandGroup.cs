@@ -69,12 +69,14 @@ namespace NeyBot.Logic.Models
         {
             CommandBuilder command = cgb.CreateCommand(commandInfo.GetSubCommand())
                 .Description(commandInfo.GetDescription());
-            string[] paramStrings = commandInfo.GetParams();
+            List<CommandParam> paramStrings = commandInfo.GetParams();
             if (paramStrings == null) { command.Do(commandInfo.GetAction()); return; }
 
             foreach (var param in commandInfo.GetParams())
             {
-                command.Parameter(param, ParameterType.Required);
+                if (param.IsRequired()) { command.Parameter(param.GetParamName(), ParameterType.Required); continue; }
+                command.Parameter(param.GetParamName());
+
             }
             command.Do(commandInfo.GetAction());
         }

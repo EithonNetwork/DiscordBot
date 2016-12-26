@@ -25,7 +25,22 @@ namespace NeyBot.Logic
             RegisterInvitationlinkCommand("neybotinvite");
             RegisterRepCommand("rep");
             RegisterBirthdayCommand("birthday");
+            //RegisterPermCommand("perm");
         }
+
+        /*private void RegisterPermCommand(string baseCommand)
+        {
+            CommandInfo command;
+            CommandGroup commandGroup = new CommandGroup(baseCommand, _commandService);
+
+            command = new CommandInfo(baseCommand, "group")
+                .SetParams("@<user>")
+                .SetDescription("Show a user's reputation points")
+                .SetAction(ReputationCommandHandler.GetReputation);
+            commandGroup.Add(command);
+
+            commandGroup.Register();
+        }*/
 
         //Make the methods for the commands registered here
 
@@ -56,25 +71,25 @@ namespace NeyBot.Logic
             CommandGroup commandGroup = new CommandGroup(baseCommand, _commandService);
 
             command = new CommandInfo(baseCommand, "points")
-                .SetParams("@<user>")
+                .AddParams("@<user>", true)
                 .SetDescription("Show a user's reputation points")
                 .SetAction(ReputationCommandHandler.GetReputation);
             commandGroup.Add(command);
 
             command = new CommandInfo(baseCommand, "add")
-                .SetParams("@<user>")
+                .AddParams("@<user>", true)
                 .SetDescription("Add reputation to a user")
                 .SetAction(ReputationCommandHandler.Add);
             commandGroup.Add(command);
 
             command = new CommandInfo(baseCommand, "remove")
-                .SetParams("@<user>")
+                .AddParams("@<user>", true)
                 .SetDescription("remove reputation to a user")
                 .SetAction(ReputationCommandHandler.Remove);
             commandGroup.Add(command);
 
             command = new CommandInfo(baseCommand, "reset")
-                .SetParams("@<user>")
+                .AddParams("@<user>", true)
                 .SetDescription("Reset a user (remove from database)")
                 .SetAction(ReputationCommandHandler.ResetUser);
             commandGroup.Add(command);
@@ -98,14 +113,14 @@ namespace NeyBot.Logic
 
             //setbirthdate command
             var setbirthdateCommand = new CommandInfo(baseCommand, "setbirthdate")
-                .SetParams("<date>")
+                .AddParams("<date>", true)
                 .SetDescription("Sets your birthdate (Date format: 2003-09-17)")
                 .SetAction(BirthdayHandler.Set);
             commandGroup.Add(setbirthdateCommand);
 
             //show command
             var showCommand = new CommandInfo(baseCommand, "show")
-                .SetParams("@<user>")
+                .AddParams("@<user>", true)
                 .SetDescription("Display a user's birthday")
                 .SetAction(BirthdayHandler.Get);
             commandGroup.Add(showCommand);

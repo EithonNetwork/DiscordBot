@@ -25,7 +25,7 @@ namespace NeyBot.Logic
                 {
                     foreach ( var param in commandParams)
                     {
-                        completeCommand = completeCommand + " " + param;
+                        completeCommand = completeCommand + " " + param.GetParamName();
                     }
                     helpMessage.Append($"**!{completeCommand}** - {command.GetDescription()} \n");
                 }
