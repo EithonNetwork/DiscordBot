@@ -49,7 +49,7 @@ namespace NeyBot.Logic
         public static async Task Get(CommandEventArgs e)
         {
             var userParam = CommandResourcesHandler.GetArgument(e, "@<user>");
-            string userIdString = CommandResourcesHandler.GetUserId(userParam);
+            string userIdString = CommandResourcesHandler.GetMentionId(userParam);
             var userObject = CommandResourcesHandler.GetUser(e, userIdString);
             if (userObject == null)
             {

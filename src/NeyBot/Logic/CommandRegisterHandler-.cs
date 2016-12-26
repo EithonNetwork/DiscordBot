@@ -25,22 +25,32 @@ namespace NeyBot.Logic
             RegisterInvitationlinkCommand("neybotinvite");
             RegisterRepCommand("rep");
             RegisterBirthdayCommand("birthday");
-            //RegisterPermCommand("perm");
+            RegisterPermCommand("perm");
         }
 
-        /*private void RegisterPermCommand(string baseCommand)
+        private void RegisterPermCommand(string baseCommand)
         {
             CommandInfo command;
             CommandGroup commandGroup = new CommandGroup(baseCommand, _commandService);
 
-            command = new CommandInfo(baseCommand, "group")
-                .SetParams("@<user>")
+            command = new CommandInfo(baseCommand, "role")
+                .AddParams("@<roleName>", true)
+                .AddParams("assignownrole", true)
+                .AddParams("<true/false>", false)
                 .SetDescription("Show a user's reputation points")
-                .SetAction(ReputationCommandHandler.GetReputation);
+                .SetAction(PermissionHandler.AssignOwnRolePermission());
             commandGroup.Add(command);
 
+            /*command = new CommandInfo(baseCommand, "role")
+                .AddParams("roleName", true)
+                .AddParams("add/remove/show", true)
+                .AddParams("permission", false)
+                .SetDescription("Show a user's reputation points")
+                .SetAction(ReputationCommandHandler.GetReputation);
+            commandGroup.Add(command);*/
+
             commandGroup.Register();
-        }*/
+        }
 
         //Make the methods for the commands registered here
 

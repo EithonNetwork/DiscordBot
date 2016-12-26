@@ -22,7 +22,7 @@ namespace NeyBot.Logic
         private static ulong generalTextChannelId = ConfigurationHandler.GetUlongOption("GeneralTextChannel");
 
 
-        public static string GetUserId(string userParam)
+        public static string GetMentionId(string userParam)
         {
             var r = Regex.Match(userParam, "[0-9]+");
             return r.Groups[0].Value;
@@ -30,7 +30,22 @@ namespace NeyBot.Logic
 
         internal static Server GetServer(DiscordClient discord)
         {
-            return discord.GetServer(serverId); 
+            return discord.GetServer(serverId);
+        }
+
+        //This method gets a user based on their ID string 
+        public static Role GetRole(CommandEventArgs e, string roleIdString)
+        {
+            try
+            {
+                ulong roleId = ulong.Parse(roleIdString);
+                var roleObject = e.Server.GetRole(roleId);
+                return roleObject;
+            }
+            catch (System.FormatException)
+            {
+                return null;
+            }
         }
 
         //This method gets a user based on their ID string 
@@ -38,8 +53,8 @@ namespace NeyBot.Logic
         {
             try
             {
-                ulong userID = ulong.Parse(userIdString);
-                var userObject = e.Server.GetUser(userID);
+                ulong userId = ulong.Parse(userIdString);
+                var userObject = e.Server.GetUser(userId);
                 return userObject;
             }
             catch (System.FormatException)
