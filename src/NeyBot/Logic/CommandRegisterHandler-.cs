@@ -37,8 +37,8 @@ namespace NeyBot.Logic
                 .AddParams("@<roleName>", true)
                 .AddParams("assignownrole", true)
                 .AddParams("<true/false>", false)
-                .SetDescription("Show a user's reputation points")
-                .SetAction(PermissionHandler.AssignOwnRolePermission());
+                .SetDescription("Adds or removes the permission to assign the role to others (from the specified role)")
+                .SetAction(PermissionHandler.AssignOwnRolePermission);
             commandGroup.Add(command);
 
             /*command = new CommandInfo(baseCommand, "role")

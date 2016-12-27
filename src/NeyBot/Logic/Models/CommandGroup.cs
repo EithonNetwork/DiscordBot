@@ -58,6 +58,7 @@ namespace NeyBot.Logic.Models
 
             _commandService.CreateGroup(_baseCommand, cgb =>
             {
+                //TODO: cgb.CreateGroup("role", cgb2 =>
                 foreach (var command in _commandInfos)
                 {
                     CreateCommandBasedOnCommandInfo(cgb, command);

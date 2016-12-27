@@ -46,14 +46,14 @@ namespace NeyBot.Database
                     new { Username = birthday.Username, Birthday = birthday.BirthdayDate, Id = birthday.Id });
             }
         }
-        public static void Delete(Birthday reputation)
+        public static void Delete(Birthday birthday)
         {
             using (var conn = new MySql.Data.MySqlClient.MySqlConnection(connectionString))
             {
                 conn.Open();
                 conn.Execute(@"
-                    DELETE FROM reputation WHERE user_id = @UserId LIMIT 1",
-                    new { UserId = reputation.UserId });
+                    DELETE FROM birthdays WHERE user_id = @UserId LIMIT 1",
+                    new { UserId = birthday.UserId });
             }
         }
         public static void DeleteAll()

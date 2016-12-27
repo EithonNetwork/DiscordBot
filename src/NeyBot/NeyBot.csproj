@@ -84,7 +84,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Database\CanAssignRoleDatabaseHandler.cs" />
     <Compile Include="Database\Models\Birthday.cs" />
+    <Compile Include="Database\Models\CanAssignRole.cs" />
     <Compile Include="Database\Models\Reputation.cs" />
     <Compile Include="Database\BirthdayDatabaseHandler .cs" />
     <Compile Include="Database\ReputationDatabaseHandler.cs" />
