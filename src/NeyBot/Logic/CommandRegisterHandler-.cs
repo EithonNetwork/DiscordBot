@@ -34,11 +34,19 @@ namespace NeyBot.Logic
             CommandGroup commandGroup = new CommandGroup(baseCommand, _commandService);
 
             command = new CommandInfo(baseCommand, "role")
-                .AddParams("@<roleName>", true)
+                .AddParams("@<role>", true)
                 .AddParams("assignownrole", true)
                 .AddParams("<true/false>", false)
                 .SetDescription("Adds or removes the permission to assign the role to others (from the specified role)")
                 .SetAction(PermissionHandler.AssignOwnRolePermission);
+            commandGroup.Add(command);
+
+            command = new CommandInfo(baseCommand, "user")
+                .AddParams("@<user>", true)
+                .AddParams("assign/unassign", true)
+                .AddParams("@<role>", false)
+                .SetDescription("Adds specified role to the specified user")
+                .SetAction(PermissionHandler.AssignRoleToOther);
             commandGroup.Add(command);
 
             /*command = new CommandInfo(baseCommand, "role")

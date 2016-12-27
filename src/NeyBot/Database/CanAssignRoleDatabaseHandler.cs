@@ -58,7 +58,7 @@ namespace NeyBot.Database
                     new { RoleId = canAssignRole.RoleId });
             }
         }
-        public static void DeleteAll()
+        /*public static void DeleteAll()
         {
             using (var conn = new MySql.Data.MySqlClient.MySqlConnection(connectionString))
             {
@@ -66,7 +66,7 @@ namespace NeyBot.Database
                 conn.Execute(
                     @"DELETE FROM can_assign_role");
             }
-        }
+        }*/
     }
 }
 

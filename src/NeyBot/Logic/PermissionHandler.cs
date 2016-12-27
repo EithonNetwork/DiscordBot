@@ -12,9 +12,19 @@ namespace NeyBot.Logic
 {
     class PermissionHandler
     {
+        private static bool IsAllowedToAssignRole(CommandEventArgs e, Role roleObject)
+        {
+            var roleIdString = roleObject.Id.ToString();
+            var CanAssignRoleObject = CanAssignRoleDatabaseHandler.Get(roleIdString);
+
+            if (!e.User.Roles.Contains<Role>(roleObject)) return false; 
+            if (CanAssignRoleObject == null) return false;
+            return true;
+        }
+
         public static async Task AssignOwnRolePermission(CommandEventArgs e)
         {
-            var roleParam = CommandResourcesHandler.GetArgument(e, "@<roleName>");
+            var roleParam = CommandResourcesHandler.GetArgument(e, "@<role>");
             string roleIdString = CommandResourcesHandler.GetMentionId(roleParam);
             var roleObject = CommandResourcesHandler.GetRole(e, roleIdString);
 
@@ -30,6 +40,49 @@ namespace NeyBot.Logic
 
             if (setOrUnsetParam) await AddAssignOwnRolePermission(e, roleObject);
             if (!setOrUnsetParam) await RemoveAssignOwnRolePermission(e, roleObject);
+        }
+
+        public static async Task AssignRoleToOther(CommandEventArgs e)
+        {
+            var assignOrUnAssignParam = CommandResourcesHandler.GetArgument(e, "assign/unassign");
+            if (assignOrUnAssignParam == "assign") { await AddRoleToOther(e); return; }
+            if (assignOrUnAssignParam == "unassign") { await RemoveRoleFromOther(e); return; }
+            await e.Channel.SendMessage($"Could not interpret \"{assignOrUnAssignParam}\". Expected \"assign\" or \"unassign\"");
+        }
+        public static async Task AddRoleToOther(CommandEventArgs e)
+        {
+            var userParam = CommandResourcesHandler.GetArgument(e, "@<user>");
+            string userIdString = CommandResourcesHandler.GetMentionId(userParam);
+            var userObject = CommandResourcesHandler.GetUser(e, userIdString);
+
+            var roleParam = CommandResourcesHandler.GetArgument(e, "@<role>");
+            string roleIdString = CommandResourcesHandler.GetMentionId(roleParam);
+            var roleObject = CommandResourcesHandler.GetRole(e, roleIdString);
+
+            if (userObject == null) { await e.Channel.SendMessage($"Could not find user"); return; }
+            if (roleObject == null) { await e.Channel.SendMessage($"Could not find role"); return; }
+            if (!IsAllowedToAssignRole(e, roleObject)) { await e.Channel.SendMessage($"Lacking required permission to execute task"); return; }
+
+            await userObject.AddRoles(roleObject);
+            await e.Channel.SendMessage($"**{userObject.Nickname ?? userObject.Name}** was assigned the **{roleObject.Name}** role");
+        }
+
+        public static async Task RemoveRoleFromOther(CommandEventArgs e)
+        {
+            var userParam = CommandResourcesHandler.GetArgument(e, "@<user>");
+            string userIdString = CommandResourcesHandler.GetMentionId(userParam);
+            var userObject = CommandResourcesHandler.GetUser(e, userIdString);
+
+            var roleParam = CommandResourcesHandler.GetArgument(e, "@<role>");
+            string roleIdString = CommandResourcesHandler.GetMentionId(roleParam);
+            var roleObject = CommandResourcesHandler.GetRole(e, roleIdString);
+
+            if (!IsAllowedToAssignRole(e, roleObject)) { await e.Channel.SendMessage($"Lacking required permission to execute task"); return; }
+            if (userObject == null) { await e.Channel.SendMessage($"Could not find user"); return; }
+            if (roleObject == null) { await e.Channel.SendMessage($"Could not find role"); return; }
+
+            await userObject.RemoveRoles(roleObject);
+            await e.Channel.SendMessage($"**{userObject.Nickname ?? userObject.Name}** was removed from the **{roleObject.Name}** role");
         }
 
         private static async Task AddAssignOwnRolePermission(CommandEventArgs e, Role roleObject)
